@@ -1,9 +1,13 @@
-import { RpcInterfaceDefinition } from "@bentley/imodeljs-common";
+import { RpcInterfaceDefinition, RpcManager } from "@bentley/imodeljs-common";
 import { IModelHost } from "@bentley/imodeljs-backend";
 import { app as electron } from "electron";
 import getSupportedRpcs from "../common/rpcs";
+import { ImodelFileImplementation } from "./IModelFileImplementation";
+import { ImodelFileInterface } from "../common/ImodelFileInterface";
 
 IModelHost.startup();
+
+RpcManager.registerImpl(ImodelFileInterface, ImodelFileImplementation);
 
 // invoke platform-specific initialization
 // tslint:disable-next-line:no-floating-promises
