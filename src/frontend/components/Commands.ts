@@ -1,4 +1,4 @@
-import { createImodel, openIModel, closeIModel } from "../actions/IModelJsFileActions";
+import { createImodel, openIModel, closeIModel, insertDefinitions } from "../actions/IModelJsFileActions";
 import { AppState } from "./AppState";
 
 interface OptionType {
@@ -45,6 +45,14 @@ const closeIModelCommand: CommandType = {
   description: 'closes the open imodel'
 }
 
+const insertDefinitionsCommand: CommandType = {
+  method: function(this: React.Component<{}, AppState>, _args: any) {
+    insertDefinitions(this).then(PrintOkToConsole).catch(PrintObjectToConsole);
+  },
+  options: [],
+  description: 'insert basic definitions to the open imodel'
+}
+
 function bindThis(command: CommandType, thisObject: React.Component<{}, AppState>) {
   return {
     method: command.method.bind(thisObject),
@@ -57,6 +65,7 @@ export function getCommands(thisObject: React.Component<{}, AppState>): any {
     createIModel: bindThis(createIModelCommand, thisObject),
     openIModel: bindThis(openIModelCommand, thisObject),
     closeIModel: bindThis(closeIModelCommand, thisObject),
+    insertDefinitions: bindThis(insertDefinitionsCommand, thisObject),
   };
 }
 
@@ -65,5 +74,6 @@ export function getDescriptions(): any {
     createIModel: createIModelCommand.description,
     openIModel: openIModelCommand.description,
     closeIModel: closeIModelCommand.description,
+    insertDefinitions: insertDefinitionsCommand.description,
   };
 }

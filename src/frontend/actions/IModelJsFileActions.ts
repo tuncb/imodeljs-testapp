@@ -19,3 +19,11 @@ export async function closeIModel(app: React.Component<{}, AppState>): Promise<v
     return app.state.iModel.closeStandalone();
   } else throw new Error('No opened imodel exist.');
 }
+
+export async function insertDefinitions(app: React.Component<{}, AppState>): Promise<void> {
+  const iModelJsFileRpc = RpcManager.getClientForInterface(ImodelFileInterface);
+  if (app.state.iModel) {
+    const basicDefinitions = await iModelJsFileRpc.insertBasicDefinitions(app.state.iModel.iModelToken);
+    app.setState({...app.state, iModelBasicDefinitions: basicDefinitions});
+  } else throw new Error('No opened imodel exist.');
+}

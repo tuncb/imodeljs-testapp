@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ECSchema schemaName="TestWorld" alias="TestWorld" version="01.00.00" xmlns="http://www.bentley.com/schemas/Bentley.ECXML.3.1">
+
+    <ECSchemaReference name="BisCore" version="01.00" alias="bis"/>
+    <ECSchemaReference name="ECDbMap" version="02.00" alias="ecdbmap"/>
+
+    <ECEntityClass typeName="Circle" modifier="Sealed">
+        <BaseClass>bis:SpatialLocationElement</BaseClass>
+        <ECProperty propertyName="radius" typeName="double" description="the ardius of the circle" />
+        <ECProperty propertyName="x" typeName="double" description="the x coordinate of the center" />
+        <ECProperty propertyName="y" typeName="double" description="the y coordinate of the center" />
+        <ECProperty propertyName="z" typeName="double" description="the z coordinate of the center" />
+    </ECEntityClass>
+
+</ECSchema>

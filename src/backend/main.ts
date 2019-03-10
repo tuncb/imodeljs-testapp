@@ -4,10 +4,12 @@ import { app as electron } from "electron";
 import getSupportedRpcs from "../common/rpcs";
 import { ImodelFileImplementation } from "./IModelFileImplementation";
 import { ImodelFileInterface } from "../common/ImodelFileInterface";
+import { TestWorld } from "./TestWorld";
 
 IModelHost.startup();
 
 RpcManager.registerImpl(ImodelFileInterface, ImodelFileImplementation);
+TestWorld.registerSchema();
 
 // invoke platform-specific initialization
 // tslint:disable-next-line:no-floating-promises
