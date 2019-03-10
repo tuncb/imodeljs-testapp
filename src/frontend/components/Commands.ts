@@ -1,4 +1,4 @@
-import { createImodel, openIModel, closeIModel, insertDefinitions } from "../actions/IModelJsFileActions";
+import { createImodel, openIModel, closeIModel, insertDefinitions, addViewDefinition } from "../actions/IModelJsFileActions";
 import { AppState } from "./AppState";
 
 interface OptionType {
@@ -8,7 +8,7 @@ interface OptionType {
 }
 
 interface CommandType {
-  method: (this: React.Component<AppState, {}>, args: any) => void;
+  method: (this: React.Component<{}, AppState>, args: any) => void;
   options: OptionType[];
   description: string;
 }
@@ -22,7 +22,7 @@ function PrintOkToConsole() {
 }
 
 const createIModelCommand: CommandType = {
-  method: function(this: React.Component<AppState, {}>, args: any) {
+  method: function(this: React.Component<{}, AppState>, args: any) {
     createImodel(args._[0] || args.filename).then(PrintOkToConsole).catch(PrintObjectToConsole);
   },
   options: [{name: 'filename', description: 'imodel filename to create', defaultValue: ''}],
@@ -53,6 +53,14 @@ const insertDefinitionsCommand: CommandType = {
   description: 'insert basic definitions to the open imodel'
 }
 
+const addViewDefinitionCommand: CommandType = {
+  method: function(this: React.Component<{}, AppState>, _args: any) {
+    addViewDefinition(this).then(PrintOkToConsole).catch(PrintObjectToConsole);
+  },
+  options: [],
+  description: 'adds a view definitions to the open imodel'
+}
+
 function bindThis(command: CommandType, thisObject: React.Component<{}, AppState>) {
   return {
     method: command.method.bind(thisObject),
@@ -66,6 +74,7 @@ export function getCommands(thisObject: React.Component<{}, AppState>): any {
     openIModel: bindThis(openIModelCommand, thisObject),
     closeIModel: bindThis(closeIModelCommand, thisObject),
     insertDefinitions: bindThis(insertDefinitionsCommand, thisObject),
+    addViewDefinition: bindThis(addViewDefinitionCommand, thisObject),
   };
 }
 
@@ -75,5 +84,6 @@ export function getDescriptions(): any {
     openIModel: openIModelCommand.description,
     closeIModel: closeIModelCommand.description,
     insertDefinitions: insertDefinitionsCommand.description,
+    addViewDefinition: addViewDefinitionCommand.description,
   };
 }

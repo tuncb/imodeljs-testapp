@@ -27,3 +27,14 @@ export async function insertDefinitions(app: React.Component<{}, AppState>): Pro
     app.setState({...app.state, iModelBasicDefinitions: basicDefinitions});
   } else throw new Error('No opened imodel exist.');
 }
+
+export async function addViewDefinition(app: React.Component<{}, AppState>): Promise<void> {
+  const iModelJsFileRpc = RpcManager.getClientForInterface(ImodelFileInterface);
+  if (app.state.iModel && app.state.iModelBasicDefinitions) {
+    const viewDefinition = await iModelJsFileRpc.addViewDefinition(app.state.iModel.iModelToken, app.state.iModelBasicDefinitions);
+
+    const currentDefinitions = app.state.viewDefinitions;
+    currentDefinitions.push(viewDefinition);
+    app.setState({...app.state, viewDefinitions: currentDefinitions});
+  } else throw new Error('could not find basic definitions in the imodel');
+}

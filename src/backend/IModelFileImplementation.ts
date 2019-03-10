@@ -1,12 +1,22 @@
 import { RpcInterface, RootSubjectProps, IModel } from "@bentley/imodeljs-common";
 import { ImodelFileInterface } from "../common/ImodelFileInterface";
-import { IModelDb, Subject, DefinitionModel, PhysicalModel, DisplayStyle3d, ModelSelector, CategorySelector } from "@bentley/imodeljs-backend";
+import { IModelDb, Subject, DefinitionModel, PhysicalModel, DisplayStyle3d, ModelSelector, CategorySelector, OrthographicViewDefinition } from "@bentley/imodeljs-backend";
 import { ActivityLoggingContext } from "@bentley/bentleyjs-core";
 import { Circle } from "./CircleElement";
 import { TestWorld } from "./TestWorld";
 import { IModelBasicDefinitions } from "../common/RpcTypes";
+import { Range3d } from "@bentley/geometry-core";
 
 export class ImodelFileImplementation extends RpcInterface implements ImodelFileInterface {
+  public async addViewDefinition(iModelToken: import("@bentley/imodeljs-common").IModelToken, basicDefinitions: IModelBasicDefinitions): Promise<string> {
+    const iModel = IModelDb.find(iModelToken);
+    const viewRange = new Range3d(0, 0, 0, 10, 10, 1);
+    return OrthographicViewDefinition.insert(iModel,
+      basicDefinitions.definitionModelId, basicDefinitions.viewName,
+      basicDefinitions.modelSelectorId, basicDefinitions.categorySelectorId,
+      basicDefinitions.displayStyleId, viewRange
+    );
+  }
   public async insertBasicDefinitions(iModelToken: import("@bentley/imodeljs-common").IModelToken): Promise<IModelBasicDefinitions> {
     const iModel = IModelDb.find(iModelToken);
     const activityContext = new ActivityLoggingContext('insert basic definitions');

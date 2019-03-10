@@ -4,6 +4,15 @@ import { getCommands, getDescriptions } from "./Commands";
 import { AppState } from "./AppState";
 
 export default class App extends React.Component<{}, AppState> {
+  constructor(props?: any, context?: any) {
+    super(props, context);
+    this.state = {
+      iModel: undefined,
+      iModelBasicDefinitions: undefined,
+      viewDefinitions: []
+    };
+  }
+
   public render() {
     return (
       <React.Fragment>
