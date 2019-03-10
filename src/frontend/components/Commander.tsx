@@ -10,18 +10,20 @@ export default class Commander extends React.Component<CommanderProps> {
   public render() {
     return (
       <React.Fragment>
-      <Terminal
-        color='green'
-        backgroundColor='black'
-        barColor='black'
-        style={{ fontWeight: "bold", fontSize: "1em" }}
-        allowTabs={false}
-        showActions={false}
-        hideTopBar={true}
-        watchConsoleLogging={true}
-        commands={this.props.commands}
-        description={this.props.descriptions}
-      />
+        {/*
+        // @ts-ignore */}
+        <Terminal
+          color='green'
+          backgroundColor='black'
+          barColor='black'
+          style={{ fontWeight: "bold", fontSize: "1em" }}
+          allowTabs={false}
+          showActions={false}
+          hideTopBar={true}
+          watchConsoleLogging={true}
+          commands={this.props.commands}
+          descriptions={this.props.descriptions} // see issue https://github.com/nitin42/terminal-in-react/issues/68
+        />
     </React.Fragment>
     )
   }
