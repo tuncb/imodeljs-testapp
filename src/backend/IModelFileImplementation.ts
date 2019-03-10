@@ -1,14 +1,28 @@
-import { RpcInterface, RootSubjectProps, IModel } from "@bentley/imodeljs-common";
+import { RpcInterface, RootSubjectProps, IModel, GeometricElement3dProps, IModelToken, Code } from "@bentley/imodeljs-common";
 import { ImodelFileInterface } from "../common/ImodelFileInterface";
 import { IModelDb, Subject, DefinitionModel, PhysicalModel, DisplayStyle3d, ModelSelector, CategorySelector, OrthographicViewDefinition } from "@bentley/imodeljs-backend";
 import { ActivityLoggingContext } from "@bentley/bentleyjs-core";
 import { Circle } from "./CircleElement";
 import { TestWorld } from "./TestWorld";
 import { IModelBasicDefinitions } from "../common/RpcTypes";
-import { Range3d } from "@bentley/geometry-core";
+import { Range3d, YawPitchRollAngles, Point3d } from "@bentley/geometry-core";
 
 export class ImodelFileImplementation extends RpcInterface implements ImodelFileInterface {
-  public async addViewDefinition(iModelToken: import("@bentley/imodeljs-common").IModelToken, basicDefinitions: IModelBasicDefinitions): Promise<string> {
+  public async addCircle(iModelToken: IModelToken,  basicDefinitions: IModelBasicDefinitions, x: number, y: number, z: number, radius: number): Promise<string> {
+    const iModel = IModelDb.find(iModelToken);
+    const location = new Point3d(x, y, z);
+    const props: GeometricElement3dProps = {
+      model: basicDefinitions.spatialModelId,
+      code: Code.createEmpty(),
+      classFullName: TestWorld.Class.Circle,      // In this example, I know what class and category to use.
+      category: Circle.getCategory(iModel).id,
+      geom: Circle.generateGeometry(x, y, z, radius),             // In this example, I know how to generate geometry, and I know that the placement is empty.
+      placement: { origin: location, angles: new YawPitchRollAngles() },
+      userLabel: name,
+  };
+  return iModel.elements.insertElement(props);
+  }
+  public async addViewDefinition(iModelToken: IModelToken, basicDefinitions: IModelBasicDefinitions): Promise<string> {
     const iModel = IModelDb.find(iModelToken);
     const viewRange = new Range3d(0, 0, 0, 10, 10, 1);
     return OrthographicViewDefinition.insert(iModel,

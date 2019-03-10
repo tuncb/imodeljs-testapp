@@ -1,4 +1,4 @@
-import { createImodel, openIModel, closeIModel, insertDefinitions, addViewDefinition } from "../actions/IModelJsFileActions";
+import { createImodel, openIModel, closeIModel, insertDefinitions, addViewDefinition, addCircle } from "../actions/IModelJsFileActions";
 import { AppState } from "./AppState";
 
 interface OptionType {
@@ -61,6 +61,19 @@ const addViewDefinitionCommand: CommandType = {
   description: 'adds a view definitions to the open imodel'
 }
 
+const addCircleCommand: CommandType = {
+  method: function(this: React.Component<{}, AppState>, args: any) {
+    addCircle(this, args._[0] || args.x, args._[1] || args.y, args._[2] || args.z, args._[3] || args.radius).then(PrintOkToConsole).catch(PrintObjectToConsole);
+  },
+  options: [
+    {name: 'x', description: 'x coordinate of the center of the circle', defaultValue: 0},
+    {name: 'y', description: 'y coordinate of the center of the circle', defaultValue: 0},
+    {name: 'z', description: 'z coordinate of the center of the circle', defaultValue: 0},
+    {name: 'radius', description: 'radius of the circle', defaultValue: 1}
+  ],
+  description: 'adds a circle to the model'
+}
+
 function bindThis(command: CommandType, thisObject: React.Component<{}, AppState>) {
   return {
     method: command.method.bind(thisObject),
@@ -75,6 +88,7 @@ export function getCommands(thisObject: React.Component<{}, AppState>): any {
     closeIModel: bindThis(closeIModelCommand, thisObject),
     insertDefinitions: bindThis(insertDefinitionsCommand, thisObject),
     addViewDefinition: bindThis(addViewDefinitionCommand, thisObject),
+    addCircle: bindThis(addCircleCommand, thisObject),
   };
 }
 
@@ -85,5 +99,6 @@ export function getDescriptions(): any {
     closeIModel: closeIModelCommand.description,
     insertDefinitions: insertDefinitionsCommand.description,
     addViewDefinition: addViewDefinitionCommand.description,
+    addCircle: addCircleCommand.description,
   };
 }
