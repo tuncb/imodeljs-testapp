@@ -8,30 +8,42 @@ import { IModelBasicDefinitions } from "../common/RpcTypes";
 import { Range3d, YawPitchRollAngles, Point3d } from "@bentley/geometry-core";
 
 export class ImodelFileImplementation extends RpcInterface implements ImodelFileInterface {
+  public async deleteElement(iModelToken: IModelToken, id: string): Promise<void> {
+    const iModel = IModelDb.find(iModelToken);
+    iModel.elements.deleteElement(id);
+  }
   public async addCircle(iModelToken: IModelToken,  basicDefinitions: IModelBasicDefinitions, x: number, y: number, z: number, radius: number): Promise<string> {
     const iModel = IModelDb.find(iModelToken);
-    const location = new Point3d(x, y, z);
+    const location = new Point3d(0, 0, 0);
+    const geom = Circle.generateGeometry(x, y, z, radius);
+
+    const name = `Circle-${x}-${y}-${z}-${radius}`;
+
     const props: GeometricElement3dProps = {
       model: basicDefinitions.spatialModelId,
       code: Code.createEmpty(),
-      classFullName: TestWorld.Class.Circle,      // In this example, I know what class and category to use.
+      classFullName: TestWorld.Class.Circle,
       category: Circle.getCategory(iModel).id,
-      geom: Circle.generateGeometry(x, y, z, radius),             // In this example, I know how to generate geometry, and I know that the placement is empty.
+      geom: geom,
       placement: { origin: location, angles: new YawPitchRollAngles() },
-      userLabel: name,
-  };
-  return iModel.elements.insertElement(props);
+      name: name
+    };
+
+    return iModel.elements.insertElement(props);
   }
-  public async addViewDefinition(iModelToken: IModelToken, basicDefinitions: IModelBasicDefinitions): Promise<string> {
+  public async addViewDefinition(iModelToken: IModelToken, basicDefinitions: IModelBasicDefinitions, name: string): Promise<string> {
     const iModel = IModelDb.find(iModelToken);
-    const viewRange = new Range3d(0, 0, 0, 10, 10, 1);
+    const viewRange = new Range3d(-10, -10, -10, 10, 10, 10);
+
+    const displayStyleId = DisplayStyle3d.insert(iModel, basicDefinitions.definitionModelId, name);
+
     return OrthographicViewDefinition.insert(iModel,
-      basicDefinitions.definitionModelId, basicDefinitions.viewName,
+      basicDefinitions.definitionModelId, name,
       basicDefinitions.modelSelectorId, basicDefinitions.categorySelectorId,
-      basicDefinitions.displayStyleId, viewRange
+      displayStyleId, viewRange
     );
   }
-  public async insertBasicDefinitions(iModelToken: import("@bentley/imodeljs-common").IModelToken): Promise<IModelBasicDefinitions> {
+  public async insertBasicDefinitions(iModelToken: IModelToken): Promise<IModelBasicDefinitions> {
     const iModel = IModelDb.find(iModelToken);
     const activityContext = new ActivityLoggingContext('insert basic definitions');
 

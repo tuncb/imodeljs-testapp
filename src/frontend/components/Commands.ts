@@ -1,4 +1,4 @@
-import { createImodel, openIModel, closeIModel, insertDefinitions, addViewDefinition, addCircle } from "../actions/IModelJsFileActions";
+import { createImodel, openIModel, closeIModel, insertDefinitions, addViewDefinition, addCircle, deleteElement } from "../actions/IModelJsFileActions";
 import { AppState } from "./AppState";
 
 interface OptionType {
@@ -25,7 +25,7 @@ const createIModelCommand: CommandType = {
   method: function(this: React.Component<{}, AppState>, args: any) {
     createImodel(args._[0] || args.filename).then(PrintOkToConsole).catch(PrintObjectToConsole);
   },
-  options: [{name: 'filename', description: 'imodel filename to create', defaultValue: ''}],
+  options: [{name: 'filename', description: 'imodel filename to create', defaultValue: 'c:\\temp\\test.imodel'}],
   description: 'creates an imodel'
 }
 
@@ -33,7 +33,7 @@ const openIModelCommand: CommandType = {
   method: function(this: React.Component<{}, AppState>, args: any) {
     openIModel(this, args._[0] || args.filename).then(PrintOkToConsole).catch(PrintObjectToConsole);
   },
-  options: [{name: 'filename', description: 'imodel filename to open', defaultValue: ''}],
+  options: [{name: 'filename', description: 'imodel filename to open', defaultValue: 'c:\\temp\\test.imodel'}],
   description: 'opens an imodel'
 }
 
@@ -54,16 +54,20 @@ const insertDefinitionsCommand: CommandType = {
 }
 
 const addViewDefinitionCommand: CommandType = {
-  method: function(this: React.Component<{}, AppState>, _args: any) {
-    addViewDefinition(this).then(PrintOkToConsole).catch(PrintObjectToConsole);
+  method: function(this: React.Component<{}, AppState>, args: any) {
+    addViewDefinition(this, args._[0] || args.name).then(PrintOkToConsole).catch(PrintObjectToConsole);
   },
-  options: [],
+  options: [{name: 'name', description: 'name of the viewDefinition', defaultValue: ''},],
   description: 'adds a view definitions to the open imodel'
 }
 
 const addCircleCommand: CommandType = {
   method: function(this: React.Component<{}, AppState>, args: any) {
-    addCircle(this, args._[0] || args.x, args._[1] || args.y, args._[2] || args.z, args._[3] || args.radius).then(PrintOkToConsole).catch(PrintObjectToConsole);
+    addCircle(this,
+      args._[0] || args.x,
+      args._[1] || args.y,
+      args._[2] || args.z,
+      args._[3] || args.radius).then(PrintOkToConsole).catch(PrintObjectToConsole);
   },
   options: [
     {name: 'x', description: 'x coordinate of the center of the circle', defaultValue: 0},
@@ -72,6 +76,23 @@ const addCircleCommand: CommandType = {
     {name: 'radius', description: 'radius of the circle', defaultValue: 1}
   ],
   description: 'adds a circle to the model'
+}
+
+const deleteCommand: CommandType = {
+  method: function(this: React.Component<{}, AppState>, args: any) {
+    deleteElement(this, args._[0] || args.id).then(PrintOkToConsole).catch(PrintObjectToConsole);
+  },
+  options: [{name: 'id', description: 'id of the element', defaultValue: ''},],
+  description: 'deletes an element from the open imodel'
+}
+
+const resetViewCommand: CommandType = {
+  method: function(this: React.Component<{}, AppState>, _args: any) {
+    this.setState({...this.state, viewDefinitions: []});
+    PrintOkToConsole();
+  },
+  options: [],
+  description: 'resets the view'
 }
 
 function bindThis(command: CommandType, thisObject: React.Component<{}, AppState>) {
@@ -89,6 +110,8 @@ export function getCommands(thisObject: React.Component<{}, AppState>): any {
     insertDefinitions: bindThis(insertDefinitionsCommand, thisObject),
     addViewDefinition: bindThis(addViewDefinitionCommand, thisObject),
     addCircle: bindThis(addCircleCommand, thisObject),
+    delete: bindThis(deleteCommand, thisObject),
+    resetViews: bindThis(resetViewCommand, thisObject),
   };
 }
 
@@ -100,5 +123,7 @@ export function getDescriptions(): any {
     insertDefinitions: insertDefinitionsCommand.description,
     addViewDefinition: addViewDefinitionCommand.description,
     addCircle: addCircleCommand.description,
+    delete: deleteCommand.description,
+    resetViews: resetViewCommand.description,
   };
 }

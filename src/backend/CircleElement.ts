@@ -1,9 +1,9 @@
 import { GeometryStreamBuilder, GeometryStreamProps } from "@bentley/imodeljs-common";
 import { Arc3d, Point3d } from "@bentley/geometry-core";
 import { TestWorld } from "./TestWorld";
-import { IModelDb, SpatialCategory, SpatialLocationElement } from "@bentley/imodeljs-backend";
+import { IModelDb, SpatialCategory, PhysicalElement } from "@bentley/imodeljs-backend";
 
-export class Circle extends SpatialLocationElement {
+export class Circle extends PhysicalElement  {
   //  Define the properties added by this subclass
   public radius: number = 1;
   public x: number = 0;

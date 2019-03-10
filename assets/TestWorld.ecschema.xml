@@ -5,7 +5,7 @@
     <ECSchemaReference name="ECDbMap" version="02.00" alias="ecdbmap"/>
 
     <ECEntityClass typeName="Circle" modifier="Sealed">
-        <BaseClass>bis:SpatialLocationElement</BaseClass>
+        <BaseClass>bis:PhysicalElement</BaseClass>
         <ECProperty propertyName="radius" typeName="double" description="the ardius of the circle" />
         <ECProperty propertyName="x" typeName="double" description="the x coordinate of the center" />
         <ECProperty propertyName="y" typeName="double" description="the y coordinate of the center" />

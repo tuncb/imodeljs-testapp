@@ -21,6 +21,7 @@ export default class Commander extends React.Component<CommanderProps> {
           showActions={false}
           hideTopBar={true}
           watchConsoleLogging={true}
+          startState= "open"
           commands={this.props.commands}
           descriptions={this.props.descriptions} // see issue https://github.com/nitin42/terminal-in-react/issues/68
         />

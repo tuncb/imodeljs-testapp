@@ -2,6 +2,9 @@ import * as React from "react";
 import Commander from "./Commander";
 import { getCommands, getDescriptions } from "./Commands";
 import { AppState } from "./AppState";
+import SimpleViewportComponent from "./Viewport";
+
+import "./App.scss";
 
 export default class App extends React.Component<{}, AppState> {
   constructor(props?: any, context?: any) {
@@ -13,14 +16,33 @@ export default class App extends React.Component<{}, AppState> {
     };
   }
 
+  public getIModelJsView(): JSX.Element {
+    if (this.state.iModel && this.state.iModelBasicDefinitions && this.state.viewDefinitions.length > 0) {
+      return (
+        <React.Fragment>
+          <SimpleViewportComponent imodel={this.state.iModel} viewDefinitionId={this.state.viewDefinitions[this.state.viewDefinitions.length - 1]} />
+        </React.Fragment>
+      )
+    } else {
+      return (
+        <h1>No view is loaded</h1>
+      )
+    }
+  }
+
   public render() {
     return (
-      <React.Fragment>
-        <Commander
-          commands={getCommands(this)}
-          descriptions={getDescriptions()}>
-        </Commander>
-      </React.Fragment>
+      <div className='app'>
+        <div className='view'>
+          {this.getIModelJsView()}
+        </div>
+        <div className='terminal'>
+          <Commander
+            commands={getCommands(this)}
+            descriptions={getDescriptions()}>
+          </Commander>
+        </div>
+      </div>
     );
   }
 
