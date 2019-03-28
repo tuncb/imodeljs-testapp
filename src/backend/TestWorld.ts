@@ -4,6 +4,7 @@ import { IModelError, SubCategoryAppearance, ColorByName } from "@bentley/imodel
 import * as _schemaNames from "../common/TestWorldSchema";
 import * as path from "path";
 import * as circles from "./CircleElement";
+import * as spheres from "./SphereElement";
 
 export class TestWorld extends Schema {
   public static registerSchema() {
@@ -17,6 +18,7 @@ export class TestWorld extends Schema {
     super();
     // Register all modules that define classes in this schema.
     // ClassRegistry detects all classes defined by each module and registers them.
+    ClassRegistry.registerModule(spheres, this);
     ClassRegistry.registerModule(circles, this);
   }
 
@@ -24,7 +26,7 @@ export class TestWorld extends Schema {
   // Also do some one-time bootstrapping of supporting definitions such as Categories.
   public static async importSchema(activityContext: ActivityLoggingContext, iModelDb: IModelDb): Promise<void> {
     activityContext.enter();
-    if (iModelDb.containsClass(_schemaNames.Class.Circle))
+    if (iModelDb.containsClass(_schemaNames.Class.Circle) && iModelDb.containsClass(_schemaNames.Class.SphereElement))
        return Promise.resolve();
 
     if (iModelDb.isReadonly)
@@ -44,6 +46,7 @@ export class TestWorld extends Schema {
 
   public static bootStrapDefinitions(iModelDb: IModelDb) {
     SpatialCategory.insert(iModelDb, IModelDb.dictionaryId, _schemaNames.Class.Circle, new SubCategoryAppearance({ color: ColorByName.silver }));
+    SpatialCategory.insert(iModelDb, IModelDb.dictionaryId, _schemaNames.Class.SphereElement, new SubCategoryAppearance({ color: ColorByName.blue }));
   }
 
   // Look up the category to use for instances of the specified class

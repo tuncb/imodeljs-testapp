@@ -1,4 +1,4 @@
-import { createImodel, openIModel, closeIModel, insertDefinitions, addViewDefinition, addCircle, deleteElement } from "../actions/IModelJsFileActions";
+import { createImodel, openIModel, closeIModel, insertDefinitions, addViewDefinition, addCircle, deleteElement, addSphere } from "../actions/IModelJsFileActions";
 import { AppState } from "./AppState";
 
 interface OptionType {
@@ -78,6 +78,23 @@ const addCircleCommand: CommandType = {
   description: 'adds a circle to the model'
 }
 
+const addSphereCommand: CommandType = {
+  method: function(this: React.Component<{}, AppState>, args: any) {
+    addSphere(this,
+      args._[0] || args.x,
+      args._[1] || args.y,
+      args._[2] || args.z,
+      args._[3] || args.radius).then(PrintOkToConsole).catch(PrintObjectToConsole);
+  },
+  options: [
+    {name: 'x', description: 'x coordinate of the center of the sphere', defaultValue: 0},
+    {name: 'y', description: 'y coordinate of the center of the sphere', defaultValue: 0},
+    {name: 'z', description: 'z coordinate of the center of the sphere', defaultValue: 0},
+    {name: 'radius', description: 'radius of the sphere', defaultValue: 1}
+  ],
+  description: 'adds a sphere to the model'
+}
+
 const deleteCommand: CommandType = {
   method: function(this: React.Component<{}, AppState>, args: any) {
     deleteElement(this, args._[0] || args.id).then(PrintOkToConsole).catch(PrintObjectToConsole);
@@ -110,6 +127,7 @@ export function getCommands(thisObject: React.Component<{}, AppState>): any {
     insertDefinitions: bindThis(insertDefinitionsCommand, thisObject),
     addViewDefinition: bindThis(addViewDefinitionCommand, thisObject),
     addCircle: bindThis(addCircleCommand, thisObject),
+    addSphere: bindThis(addSphereCommand, thisObject),
     delete: bindThis(deleteCommand, thisObject),
     resetViews: bindThis(resetViewCommand, thisObject),
   };
@@ -123,6 +141,7 @@ export function getDescriptions(): any {
     insertDefinitions: insertDefinitionsCommand.description,
     addViewDefinition: addViewDefinitionCommand.description,
     addCircle: addCircleCommand.description,
+    addSphere: addCircleCommand.description,
     delete: deleteCommand.description,
     resetViews: resetViewCommand.description,
   };

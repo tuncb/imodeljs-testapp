@@ -45,16 +45,23 @@ export async function addCircle(app: React.Component<{}, AppState>, x: number, y
   const iModelJsFileRpc = RpcManager.getClientForInterface(ImodelFileInterface);
 
   if (app.state.iModel && app.state.iModelBasicDefinitions) {
-    const id = await iModelJsFileRpc.addCircle(
+    await iModelJsFileRpc.addCircle(
       app.state.iModel.iModelToken,
       app.state.iModelBasicDefinitions,
       x, y, z, radius);
     await app.state.iModel.saveChanges();
+  } else throw new Error('could not find basic definitions in the imodel');
+}
 
-    IModelApp.viewManager.getFirstOpenView()!.synchWithView(false);
-    IModelApp.viewManager.invalidateScenes();
+export async function addSphere(app: React.Component<{}, AppState>, x: number, y: number, z: number, radius: number): Promise<void> {
+  const iModelJsFileRpc = RpcManager.getClientForInterface(ImodelFileInterface);
 
-    console.log(id);
+  if (app.state.iModel && app.state.iModelBasicDefinitions) {
+    await iModelJsFileRpc.addSphere(
+      app.state.iModel.iModelToken,
+      app.state.iModelBasicDefinitions,
+      x, y, z, radius);
+    await app.state.iModel.saveChanges();
   } else throw new Error('could not find basic definitions in the imodel');
 }
 

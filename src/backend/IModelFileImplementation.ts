@@ -6,6 +6,7 @@ import { Circle } from "./CircleElement";
 import { TestWorld } from "./TestWorld";
 import { IModelBasicDefinitions } from "../common/RpcTypes";
 import { Range3d, YawPitchRollAngles, Point3d } from "@bentley/geometry-core";
+import { SphereElement } from "./SphereElement";
 
 export class ImodelFileImplementation extends RpcInterface implements ImodelFileInterface {
   public async deleteElement(iModelToken: IModelToken, id: string): Promise<void> {
@@ -31,6 +32,27 @@ export class ImodelFileImplementation extends RpcInterface implements ImodelFile
 
     return iModel.elements.insertElement(props);
   }
+
+  public async addSphere(iModelToken: IModelToken, basicDefinitions: IModelBasicDefinitions, x: number, y: number, z: number, radius: number): Promise<string> {
+    const iModel = IModelDb.find(iModelToken);
+    const location = new Point3d(0, 0, 0);
+    const geom = SphereElement.generateGeometry(x, y, z, radius);
+
+    const name = `Sphere-${x}-${y}-${z}-${radius}`;
+
+    const props: GeometricElement3dProps = {
+      model: basicDefinitions.spatialModelId,
+      code: Code.createEmpty(),
+      classFullName: TestWorld.Class.SphereElement,
+      category: SphereElement.getCategory(iModel).id,
+      geom: geom,
+      placement: { origin: location, angles: new YawPitchRollAngles() },
+      name: name
+    };
+
+    return iModel.elements.insertElement(props);
+  }
+
   public async addViewDefinition(iModelToken: IModelToken, basicDefinitions: IModelBasicDefinitions, name: string): Promise<string> {
     const iModel = IModelDb.find(iModelToken);
     const viewRange = new Range3d(-10, -10, -10, 10, 10, 10);
@@ -60,7 +82,7 @@ export class ImodelFileImplementation extends RpcInterface implements ImodelFile
     //    Note how Element IDs are captured as strings.
     const viewName = "Test Robot View";
     const modelSelectorId = ModelSelector.insert(iModel, definitionModelId, viewName, [spatialModelId]);
-    const spatialCategoryIds = [Circle.getCategory(iModel).id];
+    const spatialCategoryIds = [Circle.getCategory(iModel).id, SphereElement.getCategory(iModel).id];
     const categorySelectorId = CategorySelector.insert(iModel, definitionModelId, viewName, spatialCategoryIds);
     const displayStyleId = DisplayStyle3d.insert(iModel, definitionModelId, viewName);
 
