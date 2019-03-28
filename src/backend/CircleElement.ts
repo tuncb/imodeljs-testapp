@@ -13,9 +13,8 @@ export class Circle extends PhysicalElement  {
   // Note: Do not redefine the constructor. You must not interfere with the constructor that is
   // already defined by the base Element class.
 
-  // You can provide handy methods for creating new Robots
   public static generateGeometry(x: number, y: number, z: number, radius: number): GeometryStreamProps {
-    const builder = new GeometryStreamBuilder();  // I know what graphics represent a robot.
+    const builder = new GeometryStreamBuilder();
     const circle = Arc3d.createXY(Point3d.create(x, y, z), radius);
     builder.appendGeometry(circle);
     return builder.geometryStream;
