@@ -19,4 +19,6 @@ The application allows you to create local imodel files and provides a simple ed
 * addViewDefinition
 * closeIModel
 
+You can use the middle mouse button to pan, and wheel to zoom in and out.
+
 The application was create to test if editing an imodel file after adding view definitions updated the visualization. At the time this feature was not implemented in imodel yet.
