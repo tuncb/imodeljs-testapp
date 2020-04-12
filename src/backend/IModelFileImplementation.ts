@@ -1,7 +1,7 @@
-import { RpcInterface, RootSubjectProps, IModel, GeometricElement3dProps, IModelToken, Code } from "@bentley/imodeljs-common";
+import { RpcInterface, RootSubjectProps, IModel, GeometricElement3dProps, IModelToken, IModelTokenProps, Code } from "@bentley/imodeljs-common";
 import { ImodelFileInterface } from "../common/ImodelFileInterface";
 import { IModelDb, Subject, DefinitionModel, PhysicalModel, DisplayStyle3d, ModelSelector, CategorySelector, OrthographicViewDefinition } from "@bentley/imodeljs-backend";
-import { ActivityLoggingContext } from "@bentley/bentleyjs-core";
+import { ClientRequestContext } from "@bentley/bentleyjs-core";
 import { Circle } from "./CircleElement";
 import { TestWorld } from "./TestWorld";
 import { IModelBasicDefinitions } from "../common/RpcTypes";
@@ -9,12 +9,12 @@ import { Range3d, YawPitchRollAngles, Point3d } from "@bentley/geometry-core";
 import { SphereElement } from "./SphereElement";
 
 export class ImodelFileImplementation extends RpcInterface implements ImodelFileInterface {
-  public async deleteElement(iModelToken: IModelToken, id: string): Promise<void> {
-    const iModel = IModelDb.find(iModelToken);
+  public async deleteElement(tokenProps: IModelTokenProps, id: string): Promise<void> {
+    const iModel: IModelDb = IModelDb.find(IModelToken.fromJSON(tokenProps));
     iModel.elements.deleteElement(id);
   }
-  public async addCircle(iModelToken: IModelToken,  basicDefinitions: IModelBasicDefinitions, x: number, y: number, z: number, radius: number): Promise<string> {
-    const iModel = IModelDb.find(iModelToken);
+  public async addCircle(tokenProps: IModelTokenProps,  basicDefinitions: IModelBasicDefinitions, x: number, y: number, z: number, radius: number): Promise<string> {
+    const iModel: IModelDb = IModelDb.find(IModelToken.fromJSON(tokenProps));
     const location = new Point3d(0, 0, 0);
     const geom = Circle.generateGeometry(x, y, z, radius);
 
@@ -25,16 +25,16 @@ export class ImodelFileImplementation extends RpcInterface implements ImodelFile
       code: Code.createEmpty(),
       classFullName: TestWorld.Class.Circle,
       category: Circle.getCategory(iModel).id,
-      geom: geom,
+      geom,
       placement: { origin: location, angles: new YawPitchRollAngles() },
-      name: name
+      userLabel: name,
     };
 
     return iModel.elements.insertElement(props);
   }
 
-  public async addSphere(iModelToken: IModelToken, basicDefinitions: IModelBasicDefinitions, x: number, y: number, z: number, radius: number): Promise<string> {
-    const iModel = IModelDb.find(iModelToken);
+  public async addSphere(tokenProps: IModelTokenProps, basicDefinitions: IModelBasicDefinitions, x: number, y: number, z: number, radius: number): Promise<string> {
+    const iModel: IModelDb = IModelDb.find(IModelToken.fromJSON(tokenProps));
     const location = new Point3d(0, 0, 0);
     const geom = SphereElement.generateGeometry(x, y, z, radius);
 
@@ -45,16 +45,16 @@ export class ImodelFileImplementation extends RpcInterface implements ImodelFile
       code: Code.createEmpty(),
       classFullName: TestWorld.Class.SphereElement,
       category: SphereElement.getCategory(iModel).id,
-      geom: geom,
+      geom,
       placement: { origin: location, angles: new YawPitchRollAngles() },
-      name: name
+      userLabel: name,
     };
 
     return iModel.elements.insertElement(props);
   }
 
-  public async addViewDefinition(iModelToken: IModelToken, basicDefinitions: IModelBasicDefinitions, name: string): Promise<string> {
-    const iModel = IModelDb.find(iModelToken);
+  public async addViewDefinition(tokenProps: IModelTokenProps, basicDefinitions: IModelBasicDefinitions, name: string): Promise<string> {
+    const iModel: IModelDb = IModelDb.find(IModelToken.fromJSON(tokenProps));
     const viewRange = new Range3d(-10, -10, -10, 10, 10, 10);
 
     const displayStyleId = DisplayStyle3d.insert(iModel, basicDefinitions.definitionModelId, name);
@@ -62,12 +62,12 @@ export class ImodelFileImplementation extends RpcInterface implements ImodelFile
     return OrthographicViewDefinition.insert(iModel,
       basicDefinitions.definitionModelId, name,
       basicDefinitions.modelSelectorId, basicDefinitions.categorySelectorId,
-      displayStyleId, viewRange
+      displayStyleId, viewRange,
     );
   }
-  public async insertBasicDefinitions(iModelToken: IModelToken): Promise<IModelBasicDefinitions> {
-    const iModel = IModelDb.find(iModelToken);
-    const activityContext = new ActivityLoggingContext('insert basic definitions');
+  public async insertBasicDefinitions(tokenProps: IModelTokenProps): Promise<IModelBasicDefinitions> {
+    const iModel: IModelDb = IModelDb.find(IModelToken.fromJSON(tokenProps));
+    const activityContext = new ClientRequestContext ("insert basic definitions");
 
     await TestWorld.importSchema(activityContext, iModel);
     iModel.saveChanges();
@@ -95,19 +95,18 @@ export class ImodelFileImplementation extends RpcInterface implements ImodelFile
       modelSelectorId,
       categorySelectorId,
       displayStyleId,
-      viewName
+      viewName,
     };
   }
   public async createIModel(filename: string): Promise<void> {
 
     const rootSubject: RootSubjectProps = {
-      name: 'IModelJsTestApp root subject',
-      description: 'dummy root subject'
+      name: "IModelJsTestApp root subject",
+      description: "dummy root subject",
     };
 
-
-    const iModel = IModelDb.createStandalone(filename, {rootSubject});
-    iModel.closeStandalone();
+    const iModel = IModelDb.createSnapshot(filename, {rootSubject});
+    iModel.closeSnapshot();
   }
 
 }

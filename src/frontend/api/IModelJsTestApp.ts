@@ -4,24 +4,24 @@ import { UiComponents } from "@bentley/ui-components";
 import initRpc from "./rpc";
 
 // subclass of IModelApp needed to use imodeljs-frontend
-export class ImodelJsTestApp extends IModelApp {
+export class ImodelJsTestApp {
   private static _isReady: Promise<void>;
-
 
   public static get ready(): Promise<void> { return this._isReady; }
 
-  protected static onStartup() {
+  public static startup() {
     // contains various initialization promises which need
     // to be fulfilled before the app is ready
+    IModelApp.startup();
     const initPromises = new Array<Promise<any>>();
 
     // initialize localization for the app
     initPromises.push(IModelApp.i18n.registerNamespace("SimpleViewer").readFinished);
     // initialize UiCore
-    initPromises.push(UiCore.initialize(this.i18n));
+    initPromises.push(UiCore.initialize(IModelApp.i18n));
 
     // initialize UiComponents
-    initPromises.push(UiComponents.initialize(this.i18n));
+    initPromises.push(UiComponents.initialize(IModelApp.i18n));
 
     // initialize RPC communication
     initPromises.push(ImodelJsTestApp.initializeRpc());

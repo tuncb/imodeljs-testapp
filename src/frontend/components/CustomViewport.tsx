@@ -8,8 +8,6 @@ import {
   Viewport,
 } from "@bentley/imodeljs-frontend";
 
-
-
 import { Transform } from "@bentley/geometry-core";
 import { ViewportComponentEvents, CubeRotationChangeEventArgs, StandardRotationChangeEventArgs } from "@bentley/ui-components";
 
@@ -42,11 +40,13 @@ export class CustomViewportComponent extends React.Component<ViewportProps> {
   public constructor(props: ViewportProps, context?: any) {
     super(props, context);
     this._viewportDiv = React.createRef<HTMLDivElement>();
-    console.log('constructor');
+    // tslint:disable-next-line: no-console
+    console.log("constructor");
   }
 
   public async componentDidMount() {
-    console.log('componentDidMount');
+    // tslint:disable-next-line: no-console
+    console.log("componentDidMount");
     if (!this._viewportDiv.current)
       throw new Error("Parent <div> failed to load");
 
@@ -77,7 +77,8 @@ export class CustomViewportComponent extends React.Component<ViewportProps> {
   }
 
   public componentWillUnmount() {
-    console.log('componentWillUnmount');
+    // tslint:disable-next-line: no-console
+    console.log("componentWillUnmount");
     if (this._vp) {
       IModelApp.viewManager.dropViewport(this._vp, true);
       this._vp.onViewChanged.removeListener(this._handleViewChanged, this);
@@ -88,28 +89,7 @@ export class CustomViewportComponent extends React.Component<ViewportProps> {
   }
 
   private _handleCubeRotationChangeEvent = (args: CubeRotationChangeEventArgs) => {
-    if (this._vp && IModelApp.viewManager.selectedView === this._vp) {
-      if (args.animationTime && args.animationTime < 0) {
-        this._vp.synchWithView(true);
-      }
-      const rotMatrix = args.rotMatrix;
-      if (this._vp.rotation !== rotMatrix) {
-        const center = this._vp.view.getTargetPoint(); // Don't try to locate geometry using depth buffer...
-        const inverse = rotMatrix.clone().inverse(); // rotation is from current nav cube state...
-        if (undefined === inverse)
-          return;
-        const targetMatrix = inverse.multiplyMatrixMatrix(this._vp.view.getRotation());
-        const worldTransform = Transform.createFixedPointAndMatrix(center, targetMatrix);
-        const frustum = this._vp.getWorldFrustum();
-        frustum.multiply(worldTransform);
-        if (args.animationTime && args.animationTime > 0) {
-          this._vp.animateFrustumChange(this._vp.getWorldFrustum(), frustum, BeDuration.fromMilliseconds(args.animationTime));
-        } else {
-          this._vp.view.setupFromFrustum(frustum);
-          this._vp.synchWithView(false);
-        }
-      }
-    }
+    this.setState({ rotMatrix: args.rotMatrix });
   }
 
   private _handleStandardRotationChangeEvent = (args: StandardRotationChangeEventArgs) => {

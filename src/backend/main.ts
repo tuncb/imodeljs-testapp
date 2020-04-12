@@ -1,4 +1,4 @@
-import { RpcInterfaceDefinition, RpcManager } from "@bentley/imodeljs-common";
+import { RpcInterfaceDefinition, RpcManager, RpcConfiguration } from "@bentley/imodeljs-common";
 import { IModelHost } from "@bentley/imodeljs-backend";
 import { app as electron } from "electron";
 import getSupportedRpcs from "../common/rpcs";

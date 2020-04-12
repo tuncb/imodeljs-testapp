@@ -1,9 +1,9 @@
 import * as React from "react";
-import Terminal from 'terminal-in-react';
+import Terminal from "terminal-in-react";
 
 interface CommanderProps {
   commands: any;
-  descriptions: any;
+  description: any;
 }
 
 export default class Commander extends React.Component<CommanderProps> {
@@ -13,9 +13,9 @@ export default class Commander extends React.Component<CommanderProps> {
         {/*
         // @ts-ignore */}
         <Terminal
-          color='green'
-          backgroundColor='black'
-          barColor='black'
+          color="green"
+          backgroundColor="black"
+          barColor="black"
           style={{ fontWeight: "bold", fontSize: "1em" }}
           allowTabs={false}
           showActions={false}
@@ -23,9 +23,9 @@ export default class Commander extends React.Component<CommanderProps> {
           watchConsoleLogging={true}
           startState= "open"
           commands={this.props.commands}
-          descriptions={this.props.descriptions} // see issue https://github.com/nitin42/terminal-in-react/issues/68
+          description={this.props.description}
         />
     </React.Fragment>
-    )
+    );
   }
 }

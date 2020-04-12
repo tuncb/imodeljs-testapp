@@ -18,10 +18,11 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>Simple Viewer App</title>
-    <!-- get the IModelJs loader to load the system -->
-    <script type="text/javascript" src="runtime.js"></script>
-    <script type="text/javascript" src="IModelJsLoader.js" data-imjsversions= '<%= htmlWebpackPlugin.options.imjsVersions %>'></script>
+    <title>Imodel.js test app</title>
+  <!-- get the IModelJs loader to load the system -->
+  <script type="text/javascript" src="v<%= htmlWebpackPlugin.options.runtimeVersion %>/runtime.js"></script>
+  <script type="text/javascript" src="v<%= htmlWebpackPlugin.options.loaderVersion %>/IModelJsLoader.js"
+    data-imjsversions='<%= htmlWebpackPlugin.options.imjsVersions %>'></script>
   </head>
   <body>
     <noscript>

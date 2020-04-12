@@ -12,7 +12,7 @@ export default class App extends React.Component<{}, AppState> {
     this.state = {
       iModel: undefined,
       iModelBasicDefinitions: undefined,
-      viewDefinitions: []
+      viewDefinitions: [],
     };
   }
 
@@ -22,24 +22,24 @@ export default class App extends React.Component<{}, AppState> {
         <React.Fragment>
           <SimpleViewportComponent imodel={this.state.iModel} viewDefinitionId={this.state.viewDefinitions[this.state.viewDefinitions.length - 1]} />
         </React.Fragment>
-      )
+      );
     } else {
       return (
         <h1>No view is loaded</h1>
-      )
+      );
     }
   }
 
   public render() {
     return (
-      <div className='app'>
-        <div className='view'>
+      <div className="app">
+        <div className="view">
           {this.getIModelJsView()}
         </div>
-        <div className='terminal'>
+        <div className="terminal">
           <Commander
             commands={getCommands(this)}
-            descriptions={getDescriptions()}>
+            description={getDescriptions()}>
           </Commander>
         </div>
       </div>

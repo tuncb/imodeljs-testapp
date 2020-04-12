@@ -6,7 +6,7 @@
 
     <ECEntityClass typeName="Circle" modifier="Sealed">
         <BaseClass>bis:PhysicalElement</BaseClass>
-        <ECProperty propertyName="radius" typeName="double" description="the ardius of the circle" />
+        <ECProperty propertyName="radius" typeName="double" description="the radius of the circle" />
         <ECProperty propertyName="x" typeName="double" description="the x coordinate of the center" />
         <ECProperty propertyName="y" typeName="double" description="the y coordinate of the center" />
         <ECProperty propertyName="z" typeName="double" description="the z coordinate of the center" />
@@ -14,7 +14,7 @@
 
     <ECEntityClass typeName="SphereElement" modifier="Sealed">
         <BaseClass>bis:PhysicalElement</BaseClass>
-        <ECProperty propertyName="radius" typeName="double" description="the ardius of the circle" />
+        <ECProperty propertyName="radius" typeName="double" description="the radius of the circle" />
         <ECProperty propertyName="x" typeName="double" description="the x coordinate of the center" />
         <ECProperty propertyName="y" typeName="double" description="the y coordinate of the center" />
         <ECProperty propertyName="z" typeName="double" description="the z coordinate of the center" />

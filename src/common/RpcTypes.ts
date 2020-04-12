@@ -1,12 +1,9 @@
-export class IModelBasicDefinitions {
-  public constructor(
-    public jubSubjectId: string,
-    public definitionModelId: string,
-    public spatialModelId: string,
-    public modelSelectorId: string,
-    public categorySelectorId: string,
-    public displayStyleId: string,
-    public viewName: string,
-  )
-  {}
+export interface IModelBasicDefinitions {
+  jubSubjectId: string;
+  definitionModelId: string;
+  spatialModelId: string;
+  modelSelectorId: string;
+  categorySelectorId: string;
+  displayStyleId: string;
+  viewName: string;
 }
