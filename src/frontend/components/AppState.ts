@@ -1,8 +1,8 @@
-import { SnapshotConnection } from "@bentley/imodeljs-frontend";
 import { IModelBasicDefinitions } from "../../common/RpcTypes";
+import { IModelRpcProps } from "@bentley/imodeljs-common";
 
 export interface AppState {
-  iModel?: SnapshotConnection;
+  iModelRpcProps?: IModelRpcProps;
   iModelBasicDefinitions?: IModelBasicDefinitions;
   viewDefinitions: string[];
 }

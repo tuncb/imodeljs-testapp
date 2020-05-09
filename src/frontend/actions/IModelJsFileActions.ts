@@ -1,6 +1,6 @@
 import { ImodelFileInterface } from "../../common/ImodelFileInterface";
 import { RpcManager } from "@bentley/imodeljs-common";
-import { IModelApp, SnapshotConnection } from "@bentley/imodeljs-frontend";
+import { IModelApp } from "@bentley/imodeljs-frontend";
 import { AppState } from "../components/AppState";
 
 export async function createImodel(filename: string) {
@@ -9,31 +9,32 @@ export async function createImodel(filename: string) {
 }
 
 export async function openIModel(app: React.Component<{}, AppState>, filename: string): Promise<void> {
-  const iModel = await SnapshotConnection.openFile(filename);
-  app.setState({iModel});
+  const iModelJsFileRpc = RpcManager.getClientForInterface(ImodelFileInterface);
+  const iModelRpcProps = await iModelJsFileRpc.openIModel(filename);
+  app.setState({iModelRpcProps});
 }
 
 export async function closeIModel(app: React.Component<{}, AppState>): Promise<void> {
-  if (app.state.iModel) {
-    return app.state.iModel.close();
+  if (app.state.iModelRpcProps) {
+    const iModelJsFileRpc = RpcManager.getClientForInterface(ImodelFileInterface);
+    return iModelJsFileRpc.closeIModel(app.state.iModelRpcProps);
   } else throw new Error("No opened imodel exist.");
 }
 
 export async function insertDefinitions(app: React.Component<{}, AppState>): Promise<void> {
   const iModelJsFileRpc = RpcManager.getClientForInterface(ImodelFileInterface);
-  if (app.state.iModel) {
-    const basicDefinitions = await iModelJsFileRpc.insertBasicDefinitions(app.state.iModel.getRpcProps());
+  if (app.state.iModelRpcProps) {
+    const basicDefinitions = await iModelJsFileRpc.insertBasicDefinitions(app.state.iModelRpcProps);
     app.setState({...app.state, iModelBasicDefinitions: basicDefinitions});
   } else throw new Error("No opened imodel exist.");
 }
 
 export async function addViewDefinition(app: React.Component<{}, AppState>, name: string): Promise<void> {
   const iModelJsFileRpc = RpcManager.getClientForInterface(ImodelFileInterface);
-  if (app.state.iModel && app.state.iModelBasicDefinitions) {
+  if (app.state.iModelRpcProps && app.state.iModelBasicDefinitions) {
     const viewDefinition = await iModelJsFileRpc.addViewDefinition(
-      app.state.iModel.getRpcProps(), app.state.iModelBasicDefinitions, name,
+      app.state.iModelRpcProps, app.state.iModelBasicDefinitions, name,
     );
-    await app.state.iModel.saveChanges();
     const currentDefinitions = app.state.viewDefinitions;
     currentDefinitions.push(viewDefinition);
     app.setState({...app.state, viewDefinitions: currentDefinitions});
@@ -43,32 +44,30 @@ export async function addViewDefinition(app: React.Component<{}, AppState>, name
 export async function addCircle(app: React.Component<{}, AppState>, x: number, y: number, z: number, radius: number): Promise<void> {
   const iModelJsFileRpc = RpcManager.getClientForInterface(ImodelFileInterface);
 
-  if (app.state.iModel && app.state.iModelBasicDefinitions) {
+  if (app.state.iModelRpcProps && app.state.iModelBasicDefinitions) {
     await iModelJsFileRpc.addCircle(
-      app.state.iModel.getRpcProps(),
+      app.state.iModelRpcProps,
       app.state.iModelBasicDefinitions,
       x, y, z, radius);
-    await app.state.iModel.saveChanges();
   } else throw new Error("could not find basic definitions in the imodel");
 }
 
 export async function addSphere(app: React.Component<{}, AppState>, x: number, y: number, z: number, radius: number): Promise<void> {
   const iModelJsFileRpc = RpcManager.getClientForInterface(ImodelFileInterface);
 
-  if (app.state.iModel && app.state.iModelBasicDefinitions) {
+  if (app.state.iModelRpcProps && app.state.iModelBasicDefinitions) {
     await iModelJsFileRpc.addSphere(
-      app.state.iModel.getRpcProps(),
+      app.state.iModelRpcProps,
       app.state.iModelBasicDefinitions,
       x, y, z, radius);
-    await app.state.iModel.saveChanges();
   } else throw new Error("could not find basic definitions in the imodel");
 }
 
 export async function deleteElement(app: React.Component<{}, AppState>, id: string): Promise<void> {
   const iModelJsFileRpc = RpcManager.getClientForInterface(ImodelFileInterface);
 
-  if (app.state.iModel) {
-    await iModelJsFileRpc.deleteElement(app.state.iModel.getRpcProps(), id);
+  if (app.state.iModelRpcProps) {
+    await iModelJsFileRpc.deleteElement(app.state.iModelRpcProps, id);
     const view = IModelApp.viewManager.selectedView!;
     view.invalidateScene();
   } else throw new Error("could not find an open imodel");
