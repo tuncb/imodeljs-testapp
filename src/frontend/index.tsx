@@ -1,7 +1,7 @@
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 import { ImodelJsTestApp } from "./api/IModelJsTestApp";
-import ReactDOM = require("react-dom");
 import App from "./components/App";
-import React = require("react");
 
 // initialize the application
 ImodelJsTestApp.startup();
