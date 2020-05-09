@@ -1,16 +1,14 @@
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 import { ImodelJsTestApp } from "./api/IModelJsTestApp";
-import ReactDOM = require("react-dom");
 import App from "./components/App";
-import React = require("react");
 
-// initialize the application
-ImodelJsTestApp.startup();
+(async () => {
+  await ImodelJsTestApp.startup();
 
-// tslint:disable-next-line:no-floating-promises
-ImodelJsTestApp.ready.then(() => {
-  // when initialization is complete, render
+  await ImodelJsTestApp.ready;
   ReactDOM.render(
     <App />,
     document.getElementById("root") as HTMLElement,
   );
-});
+})(); // tslint:disable-line:no-floating-promises

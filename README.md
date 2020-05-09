@@ -2,20 +2,20 @@
 
 A prototype application to test if changes in an imodel reflected in an already created imodel.
 Originally written for imodel version 0.189.0 where editing standalone imodel files were possible.
-The current version 1.14.0 does not allow editing of standalone imodel files (they are called snapshots now) so editing functionality currently does not work.
+The current version 2.0 does not allow editing of snapshot imodel files so editing functionality currently does not work.
 
 Setup:
 * Clone the repo
-* yarn (depending on your node version you might have to use yarn --ignore-engines
-* yarn build
-* yarn start:servers
+* npm install (depending on your node version you might have to use yarn --ignore-engines
+* npm run build
+* npm run start:servers
 * in your browser go to http://localhost:3000/ you should see the application running
 
 The application allows you to create local imodel files and provides a simple edit and visualization functionality. It uses a simple schema file that has definitions for circle and sphere geometry. In the repl console you can execute command help to see available commands. Sample usage:
 * createIModel e:\temp\model.imodel
 * openIModel e:\temp\model.imodel
 
-Does not work in version imodel.js version 1.14:
+Does not work currently with snapshots of imodel.js 2.0:
 
 * insertDefinitions
 * addCircle -x=5 -y=5 -z=0 -r=2

@@ -1,6 +1,5 @@
 // tslint:disable:no-console
-import * as express from "express";
-import { RpcInterfaceDefinition, BentleyCloudRpcManager } from "@bentley/imodeljs-common";
+import { BentleyCloudRpcManager, RpcInterfaceDefinition } from "@bentley/imodeljs-common";
 import { IModelJsExpressServer } from "@bentley/express-server";
 
 export default async function initialize(rpcs: RpcInterfaceDefinition[]) {

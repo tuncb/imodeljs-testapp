@@ -1,6 +1,6 @@
-import { RpcInterface, RootSubjectProps, IModel, GeometricElement3dProps, IModelToken, IModelTokenProps, Code } from "@bentley/imodeljs-common";
+import { RpcInterface, RootSubjectProps, IModel, GeometricElement3dProps, IModelRpcProps, Code } from "@bentley/imodeljs-common";
 import { ImodelFileInterface } from "../common/ImodelFileInterface";
-import { IModelDb, Subject, DefinitionModel, PhysicalModel, DisplayStyle3d, ModelSelector, CategorySelector, OrthographicViewDefinition } from "@bentley/imodeljs-backend";
+import { IModelDb, Subject, DefinitionModel, PhysicalModel, DisplayStyle3d, ModelSelector, CategorySelector, OrthographicViewDefinition, SnapshotDb } from "@bentley/imodeljs-backend";
 import { ClientRequestContext } from "@bentley/bentleyjs-core";
 import { Circle } from "./CircleElement";
 import { TestWorld } from "./TestWorld";
@@ -9,12 +9,12 @@ import { Range3d, YawPitchRollAngles, Point3d } from "@bentley/geometry-core";
 import { SphereElement } from "./SphereElement";
 
 export class ImodelFileImplementation extends RpcInterface implements ImodelFileInterface {
-  public async deleteElement(tokenProps: IModelTokenProps, id: string): Promise<void> {
-    const iModel: IModelDb = IModelDb.find(IModelToken.fromJSON(tokenProps));
+  public async deleteElement(tokenProps: IModelRpcProps, id: string): Promise<void> {
+    const iModel: IModelDb = IModelDb.findByKey(tokenProps.key);
     iModel.elements.deleteElement(id);
   }
-  public async addCircle(tokenProps: IModelTokenProps,  basicDefinitions: IModelBasicDefinitions, x: number, y: number, z: number, radius: number): Promise<string> {
-    const iModel: IModelDb = IModelDb.find(IModelToken.fromJSON(tokenProps));
+  public async addCircle(tokenProps: IModelRpcProps,  basicDefinitions: IModelBasicDefinitions, x: number, y: number, z: number, radius: number): Promise<string> {
+    const iModel: IModelDb = IModelDb.findByKey(tokenProps.key);
     const location = new Point3d(0, 0, 0);
     const geom = Circle.generateGeometry(x, y, z, radius);
 
@@ -33,8 +33,8 @@ export class ImodelFileImplementation extends RpcInterface implements ImodelFile
     return iModel.elements.insertElement(props);
   }
 
-  public async addSphere(tokenProps: IModelTokenProps, basicDefinitions: IModelBasicDefinitions, x: number, y: number, z: number, radius: number): Promise<string> {
-    const iModel: IModelDb = IModelDb.find(IModelToken.fromJSON(tokenProps));
+  public async addSphere(tokenProps: IModelRpcProps, basicDefinitions: IModelBasicDefinitions, x: number, y: number, z: number, radius: number): Promise<string> {
+    const iModel: IModelDb = IModelDb.findByKey(tokenProps.key);
     const location = new Point3d(0, 0, 0);
     const geom = SphereElement.generateGeometry(x, y, z, radius);
 
@@ -53,8 +53,8 @@ export class ImodelFileImplementation extends RpcInterface implements ImodelFile
     return iModel.elements.insertElement(props);
   }
 
-  public async addViewDefinition(tokenProps: IModelTokenProps, basicDefinitions: IModelBasicDefinitions, name: string): Promise<string> {
-    const iModel: IModelDb = IModelDb.find(IModelToken.fromJSON(tokenProps));
+  public async addViewDefinition(tokenProps: IModelRpcProps, basicDefinitions: IModelBasicDefinitions, name: string): Promise<string> {
+    const iModel: IModelDb = IModelDb.findByKey(tokenProps.key);
     const viewRange = new Range3d(-10, -10, -10, 10, 10, 10);
 
     const displayStyleId = DisplayStyle3d.insert(iModel, basicDefinitions.definitionModelId, name);
@@ -65,8 +65,8 @@ export class ImodelFileImplementation extends RpcInterface implements ImodelFile
       displayStyleId, viewRange,
     );
   }
-  public async insertBasicDefinitions(tokenProps: IModelTokenProps): Promise<IModelBasicDefinitions> {
-    const iModel: IModelDb = IModelDb.find(IModelToken.fromJSON(tokenProps));
+  public async insertBasicDefinitions(tokenProps: IModelRpcProps): Promise<IModelBasicDefinitions> {
+    const iModel: IModelDb = IModelDb.findByKey(tokenProps.key);
     const activityContext = new ClientRequestContext ("insert basic definitions");
 
     await TestWorld.importSchema(activityContext, iModel);
@@ -105,8 +105,8 @@ export class ImodelFileImplementation extends RpcInterface implements ImodelFile
       description: "dummy root subject",
     };
 
-    const iModel = IModelDb.createSnapshot(filename, {rootSubject});
-    iModel.closeSnapshot();
+    const iModel = SnapshotDb.createEmpty(filename, {rootSubject});
+    iModel.close();
   }
 
 }

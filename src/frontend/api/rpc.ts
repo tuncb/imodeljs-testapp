@@ -1,10 +1,5 @@
-import {
-  BentleyCloudRpcManager, ElectronRpcManager, ElectronRpcConfiguration,
-  RpcConfiguration, RpcOperation, IModelToken, IModelTileRpcInterface,
-  RpcResponseCacheControl, MobileRpcConfiguration, MobileRpcManager,
-} from "@bentley/imodeljs-common";
+import { BentleyCloudRpcManager, ElectronRpcConfiguration, ElectronRpcManager, MobileRpcConfiguration, MobileRpcManager, RpcConfiguration } from "@bentley/imodeljs-common";
 import getSupportedRpcs from "../../common/rpcs";
-import { OpenMode } from "@bentley/bentleyjs-core";
 
 /**
  * Initializes RPC communication based on the platform
@@ -24,10 +19,6 @@ export default function initRpc(): RpcConfiguration {
     // initialize RPC for web apps
     const rpcParams = { info: { title: "imodeljs test app", version: "v1.0" }, uriPrefix: "http://localhost:3001" };
     config = BentleyCloudRpcManager.initializeClient(rpcParams, rpcInterfaces);
-    // Insert a dummy IModelToken parameter in order to use rpc functions without IModelTokenParameters as the first argument
-    // This is a requirement that is not mentioned in the docs.
-    for (const def of config.interfaces())
-      RpcOperation.forEach(def, (operation) => operation.policy.token = (request) => (request.findTokenPropsParameter() || new IModelToken("test", "test", "test", "test", OpenMode.ReadWrite)));
   }
   return config;
 }

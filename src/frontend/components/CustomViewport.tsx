@@ -1,15 +1,7 @@
 import * as React from "react";
-import { Id64String, BeDuration } from "@bentley/bentleyjs-core";
-import {
-  IModelApp,
-  IModelConnection,
-  ViewState,
-  ScreenViewport,
-  Viewport,
-} from "@bentley/imodeljs-frontend";
-
-import { Transform } from "@bentley/geometry-core";
-import { ViewportComponentEvents, CubeRotationChangeEventArgs, StandardRotationChangeEventArgs } from "@bentley/ui-components";
+import { Id64String } from "@bentley/bentleyjs-core";
+import { IModelApp, IModelConnection, Viewport, ViewState, ScreenViewport } from "@bentley/imodeljs-frontend";
+import { CubeRotationChangeEventArgs, StandardRotationChangeEventArgs, ViewportComponentEvents } from "@bentley/ui-components";
 
 /**
  * Properties for [[ViewportComponent]] component.

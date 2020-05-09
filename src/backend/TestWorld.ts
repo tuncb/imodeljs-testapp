@@ -30,7 +30,7 @@ export class TestWorld extends Schema {
     // Must import the schema. The schema must be installed alongside the app in its
     // assets directory. Note that, for portability, make sure the case of
     // the filename is correct!
-    await iModelDb.importSchema(activityContext, path.join(__dirname, "../assets/TestWorld.ecschema.xml"));
+    await iModelDb.importSchemas(activityContext, [path.join(__dirname, "../assets/TestWorld.ecschema.xml")]);
 
     // This is the right time to create definitions, such as Categories, that will
     // be used with the classes in this schema.
