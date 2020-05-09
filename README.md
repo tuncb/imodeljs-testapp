@@ -6,7 +6,7 @@ The current version 2.0 does not allow editing of snapshot imodel files so editi
 
 Setup:
 * Clone the repo
-* npm install (depending on your node version you might have to use yarn --ignore-engines
+* npm install
 * npm run build
 * npm run start:servers
 * in your browser go to http://localhost:3000/ you should see the application running
