@@ -1,74 +1,56 @@
+import * as electron from "electron";
 import * as path from "path";
-import { app, protocol, BrowserWindow } from "electron";
-import { RpcInterfaceDefinition, ElectronRpcManager } from "@bentley/imodeljs-common";
+import { IModelJsElectronManager, StandardElectronManager, WebpackDevServerElectronManager } from "@bentley/electron-manager";
+import { ElectronRpcManager, RpcInterfaceDefinition } from "@bentley/imodeljs-common";
 
 /**
  * Initializes Electron backend
  */
+const autoOpenDevTools = true; // (undefined === process.env.SVT_NO_DEV_TOOLS);
+const maximizeWindow = (undefined === process.env.SVT_NO_MAXIMIZE_WINDOW);
+
 export default function initialize(rpcs: RpcInterfaceDefinition[]) {
-  // tell ElectronRpcManager which RPC interfaces to handle
-  ElectronRpcManager.initializeImpl({}, rpcs);
+  (async () => { // tslint:disable-line:no-floating-promises
+    let manager: StandardElectronManager;
+    if (process.env.NODE_ENV === "production")
+      manager = new IModelJsElectronManager(path.join(__dirname, "..", "..", "..", "build"));
+    else
+      manager = new WebpackDevServerElectronManager(3000); // port should match the port of the local dev server
 
-  // in order to preserve the platform standard behavior on MacOS,
-  // the application needs to continue running even if the "main" window closes
-  // so we'll keep a reference to the currently open "main" window here
-  let mainWindow: BrowserWindow | undefined;
+    // Handle custom keyboard shortcuts
+    electron.app.on("web-contents-created", (_e, wc) => {
+      wc.on("before-input-event", (event, input) => {
+        // CTRL + SHIFT + I  ==> Toggle DevTools
+        if (input.key === "I" && input.control && !input.alt && !input.meta && input.shift) {
+          if (manager.mainWindow)
+            manager.mainWindow.webContents.toggleDevTools();
 
-  /**
-   * Converts an "electron://" URL to an absolute file path.
-   *
-   * We use this protocol in production builds because our frontend must be built with absolute URLs,
-   * however, since we're loading everything directly from the install directory, we cannot know the
-   * absolute path at build time.
-   */
-  function parseElectronUrl(requestedUrl: string): string {
-    let assetPath = requestedUrl.substr("electron://".length);
-    assetPath = assetPath.replace(/#.*$/, "");
-    return path.normalize(`${__dirname}/../../webresources/${assetPath}`);
-  }
-
-  /**
-   * Creates the "main" electron BrowserWindow with the application's frontend.
-   */
-  function createWindow() {
-    // in dev builds (npm start), we don't copy the public folder to lib/public,
-    // so we'll need to access the original public dir for our app icon
-    const isDevBuild = (process.env.NODE_ENV === "development");
-    const iconPath = (isDevBuild) ? path.join(__dirname, "../../webresources/appicon.ico") : path.join(__dirname, "../../webresources/appicon.ico");
-
-    // configure and create the main window
-    mainWindow = new BrowserWindow({
-      autoHideMenuBar: true,
-      icon: iconPath,
+          event.preventDefault();
+        }
+      });
     });
-    mainWindow.on("closed", () => mainWindow = undefined);
 
-    // load the frontend
-    //    in development builds, the frontend assets are served by the webpack devserver
-    //    in production builds, load the built frontend assets directly from the filesystem
-    mainWindow.loadURL(isDevBuild ? "http://localhost:3000" : parseElectronUrl("electron://index.html"));
+    await manager.initialize({
+      width: 800,
+      height: 650,
+      webPreferences: {
+        nodeIntegration: true,
+        experimentalFeatures: true, // Needed for CSS Grid support
+      },
+      autoHideMenuBar: true,
+      show: !maximizeWindow,
+    });
 
-    mainWindow.webContents.openDevTools();
-  }
+    // tell ElectronRpcManager which RPC interfaces to handle
+    ElectronRpcManager.initializeImpl({}, rpcs);
 
-  // open the "frontend" window when the application starts up
-  app.on("ready", () => {
-    createWindow();
-
-    // also handle any "electron://" requests and redirect them to "file://" URLs
-    protocol.registerFileProtocol("electron", (request, callback) => callback(parseElectronUrl(request.url)));
-  });
-
-  // quit the application when all windows are closed (unless we're running on MacOS)
-  app.on("window-all-closed", () => {
-    if (process.platform !== "darwin")
-      app.quit();
-  });
-
-  // re-open the main window if it was closed and the app is re-activated (this is the normal MacOS behavior)
-  app.on("activate", () => {
-    if (!mainWindow)
-      createWindow();
-  });
-
+    if (manager.mainWindow) {
+      if (maximizeWindow) {
+        manager.mainWindow.maximize(); // maximize before showing to avoid resize event on startup
+        manager.mainWindow.show();
+      }
+      if (autoOpenDevTools)
+        manager.mainWindow.webContents.toggleDevTools();
+    }
+  })();
 }
