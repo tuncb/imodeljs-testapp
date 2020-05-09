@@ -3,14 +3,12 @@ import * as ReactDOM from "react-dom";
 import { ImodelJsTestApp } from "./api/IModelJsTestApp";
 import App from "./components/App";
 
-// initialize the application
-ImodelJsTestApp.startup();
+(async () => {
+  await ImodelJsTestApp.startup();
 
-// tslint:disable-next-line:no-floating-promises
-ImodelJsTestApp.ready.then(() => {
-  // when initialization is complete, render
+  await ImodelJsTestApp.ready;
   ReactDOM.render(
     <App />,
     document.getElementById("root") as HTMLElement,
   );
-});
+})(); // tslint:disable-line:no-floating-promises
