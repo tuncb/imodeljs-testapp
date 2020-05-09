@@ -1,10 +1,5 @@
-import {
-  BentleyCloudRpcManager, ElectronRpcConfiguration, ElectronRpcManager,
-  IModelRpcProps, IModelTileRpcInterface, MobileRpcConfiguration, MobileRpcManager,
-  RpcConfiguration, RpcOperation, RpcResponseCacheControl,
-} from "@bentley/imodeljs-common";
+import { BentleyCloudRpcManager, ElectronRpcConfiguration, ElectronRpcManager, MobileRpcConfiguration, MobileRpcManager, RpcConfiguration } from "@bentley/imodeljs-common";
 import getSupportedRpcs from "../../common/rpcs";
-import { OpenMode } from "@bentley/bentleyjs-core";
 
 /**
  * Initializes RPC communication based on the platform
