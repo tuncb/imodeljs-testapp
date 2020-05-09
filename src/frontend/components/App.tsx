@@ -10,18 +10,19 @@ export default class App extends React.Component<{}, AppState> {
   constructor(props?: any, context?: any) {
     super(props, context);
     this.state = {
-      iModel: undefined,
+      iModelRpcProps: undefined,
       iModelBasicDefinitions: undefined,
       viewDefinitions: [],
     };
   }
 
   public getIModelJsView(): JSX.Element {
-    if (this.state.iModel && this.state.iModelBasicDefinitions && this.state.viewDefinitions.length > 0) {
+    if (this.state.iModelRpcProps && this.state.iModelBasicDefinitions && this.state.viewDefinitions.length > 0) {
       return (
-        <React.Fragment>
-          <SimpleViewportComponent imodel={this.state.iModel} viewDefinitionId={this.state.viewDefinitions[this.state.viewDefinitions.length - 1]} />
-        </React.Fragment>
+        // <React.Fragment>
+        //   <SimpleViewportComponent imodel={this.state.iModel} viewDefinitionId={this.state.viewDefinitions[this.state.viewDefinitions.length - 1]} />
+        // </React.Fragment>
+        <h1>No view is loaded</h1>
       );
     } else {
       return (
