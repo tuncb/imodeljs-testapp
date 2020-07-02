@@ -2,7 +2,7 @@ import * as React from "react";
 import Commander from "./Commander";
 import { getCommands, getDescriptions } from "./Commands";
 import { AppState } from "./AppState";
-import SimpleViewportComponent from "./Viewport";
+// import SimpleViewportComponent from "./Viewport";
 
 import "./App.scss";
 

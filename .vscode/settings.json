@@ -7,5 +7,10 @@
   ],
   "files.exclude": {
     "node_modules": true
+  },
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#0D313F",
+    "titleBar.activeBackground": "#124558",
+    "titleBar.activeForeground": "#F5FBFD"
   }
 }
